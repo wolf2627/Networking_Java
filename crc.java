@@ -3,13 +3,13 @@ import java.util.Scanner;
 class crc {
     void div(int[] a, int k) {
         int[] gp = {1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1};
-        int count = 0;
-        for (int i = 0; i < k; i++) {
-            if (a[i] == gp[0]) {
-                for (int j = i; j < 17 + i; j++) {
-                    a[j] = a[j] ^ gp[count++];
+        int gpLength = gp.length;
+        
+        for (int i = 0; i <= k; i++) {
+            if (a[i] == 1) {
+                for (int j = 0; j < gpLength; j++) {
+                    a[i + j] = a[i + j] ^ gp[j];
                 }
-                count = 0;
             }
         }
     }
@@ -29,16 +29,20 @@ class crc {
             a[i] = sc.nextInt();
         }
 
+       
         for (int i = 0; i < 16; i++) {
-            a[len++] = 0;
+            a[len + i] = 0;
         }
-        k = len - 16;
-        
+        k = len;
+        len += 16;
+
         for (int i = 0; i < len; i++) {
             b[i] = a[i];
         }
 
         ob.div(a, k);
+
+        
         for (int i = 0; i < len; i++) {
             a[i] = a[i] ^ b[i];
         }
@@ -55,12 +59,22 @@ class crc {
         }
 
         ob.div(a, k);
-        for (int i = 0; i < len; i++) {
+
+        boolean errorDetected = false;
+        for (int i = k; i < len; i++) {
             if (a[i] != 0) {
-                System.out.println("ERROR in Received data");
-                return;
+                errorDetected = true;
+                break;
             }
         }
-        System.out.println("No error");
+
+        if (errorDetected) {
+            System.out.println("ERROR in Received data");
+        } else {
+            System.out.println("No error");
+        }
+
+        sc.close();
     }
 }
+
