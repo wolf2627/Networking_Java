@@ -1,41 +1,37 @@
-import java.io.*;
+import java.util.*;
 import java.net.*;
+import java.io.*;
 
-public class HTTPClient {
-    public static void main(String[] args) {
-        String hostName = "www.google.com";
-        int portNumber = 80;
-
-        try {
-            // Create a socket to connect to the specified host and port
-            Socket socket = new Socket(hostName, portNumber);
-            
-            // Create a PrintWriter for sending the GET request to the server
-            PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-            
-            // Create a BufferedReader for reading the response from the server
-            BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            
-            // Send the HTTP GET request
-            out.println("GET / HTTP/1.1\nHost: www.google.com\n\n");
-            
-            // Read and print the response from the server
-            String inputLine;
-            while ((inputLine = in.readLine()) != null) {
-                System.out.println(inputLine);
-            }
-            
-            // Close the resources
-            in.close();
-            out.close();
-            socket.close();
-            
-        } catch (UnknownHostException e) {
-            System.err.println("Don't know about host " + hostName);
-            System.exit(1);
-        } catch (IOException e) {
-            System.err.println("Couldn't get I/O for the connection to " + hostName);
-            System.exit(1);
-        }
-    }
+class HTTPClient{
+	public static void main(String[] args){
+		Scanner sc = new Scanner(System.in);
+		System.out.print("Enter the host address: ");
+		String host_addr = sc.nextLine();
+		int port = 80;
+		try{
+			Socket s = new Socket(host_addr, port);
+			PrintWriter out = new PrintWriter(s.getOutputStream(), true);
+			BufferedReader in = new BufferedReader(new InputStreamReader(s.getInputStream()));
+			
+			
+			out.print("GET / HTTP/1.1\r\n");
+		        out.print("Host: " + host_addr + "\r\n");
+		    	out.print("Connection: Close\r\n");
+		   	out.print("\r\n");
+		   	out.flush();
+		   	
+			String input;
+			while((input=in.readLine())!=null){
+				System.out.println(input);
+			}
+			System.out.println("Successful");
+			
+		} catch(UnknownHostException e){
+			System.err.println("Host not found");
+		} catch (IOException e){
+			System.err.println(e.getMessage());
+		} finally {
+			sc.close();
+		}
+	}
 }
